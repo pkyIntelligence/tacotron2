@@ -70,8 +70,12 @@ def prepare_directories_and_logger(output_directory, log_directory, rank):
     return logger
 
 
-def load_model(hparams):
-    model = Tacotron2(hparams).cuda()
+def load_model(hparams, device):
+    if device.type == "gpu":
+        model = Tacotron2(hparams).cuda()
+    else:
+        model = Tacotron2(hparams)
+
     if hparams.fp16_run:
         model.decoder.attention_layer.score_mask_value = finfo('float16').min
 
